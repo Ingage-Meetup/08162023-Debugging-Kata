@@ -1,0 +1,169 @@
+using System;
+using System.Collections.Generic;
+
+namespace BookInventory
+{
+    using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    public class Book
+    {
+        public Book( string title, string author, int year)
+        {
+            Title = title;
+            Author = author;
+            Year = year;
+        }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Author { get; set; }
+        public int Year { get; set; }
+    }
+
+    public class BookInventory
+    {
+        private List<Book> books = null;
+
+        public BookInventory()
+        {
+
+        }
+        public BookInventory(List<Book> inventory)
+        {
+            if (inventory != null)
+            {
+                books = inventory;
+            }
+            else
+            {
+                InitInventory();
+            }
+
+        }
+        
+
+        public void AddBook(Book book)
+        {
+            // 1. Bug: Blows up if book collection is empty
+            if (book != null)
+            {
+                int lastId = books.Max(id => id.Id);
+                book.Id = ++lastId;
+                books.Add(book);
+            }
+        }
+
+        public Book GetBook(int id)
+        {
+            return books.FirstOrDefault(b => b.Id == id);
+        }
+
+        public Book GetBookByTitle(string title)
+        {
+            Book theBook = null;
+            foreach (Book book in books)  // 2. Bug: Blows up if nothing in the collection; should return null
+            {
+                if (book.Title.Equals(title))
+                {
+                    theBook = book;
+                    break;
+                }
+            }
+
+            return theBook;
+        }
+
+        public void RemoveBook(string title)
+        {
+            var bookToRemove = GetBookByTitle(title); // 3. Bug: Should be RemoveAll
+            books.Remove(bookToRemove);
+        }
+
+        public List<Book> GetBooksByAuthor(string author)
+        {
+            return books.Where(b => b.Author.Contains(author)).ToList();
+        }
+
+        public int CountBooks()
+        {
+            return books.Count + 1; // 4. Bug: Chould be Count, not Count + 1
+        }
+
+        public List<Book> GetBooksByYear(int year)
+        {
+            return books.Where(b => b.Year != year).ToList();
+        }
+
+        public List<Book> GetLatestBooks(int count)
+        {
+            return books.Take(count).ToList(); // 5. Bug: Just takes first 5
+        }
+
+        public void UpdateBookTitle(int id, string newTitle) // 5. Bug: Doesn't update title
+        {
+            var book = GetBook(id);
+            book.Title = newTitle;
+        }
+
+        public List<Book> SearchBooks(string searchTerm)
+        {
+            return books.Where(b => b.Title.Substring(0, searchTerm.Length).Contains(searchTerm)).ToList(); // 7. Bug: Should be length -1
+        }
+
+        public Book GetFirstBook()
+        {
+            return books[1]; // 8. Bug: wrong index for first book
+        }
+
+        public Book GetLastBook()
+        {
+            return books[books.Count] as Book; // 9. Bug: Should be Count -1]
+        }
+
+        public List<Book> GetAllBooks()
+        {
+            if (books.Count != 0) // Bug: 10. Should be ==0
+            {
+                return null;
+            }
+            return books;
+        }
+
+        public void InitInventory()
+        {
+            AddBook(new Book("Moby Dick", "Herman Melville", 1851));
+            AddBook(new Book("Pride and Prejudice", "Jane Austin", 1813));
+            AddBook(new Book("1984", "George Orwell", 1949));
+            AddBook(new Book("To Kill a Mockingbird", "Harper Lee", 1960));
+            AddBook(new Book("Brave New World", "Aldous Huxley", 1932));
+            AddBook(new Book("The Great Gatsby", "F. Scott Fitzgerald", 1925));
+            AddBook(new Book("Catcher in the Rye", "J.D. Salinger", 1951));
+            AddBook(new Book("War and Peace", "Leo Tolstoy", 1869));
+            AddBook(new Book("The Odyssey", "Homer", -800));
+            AddBook(new Book("Ulysses", "James Joyce", 1922));
+            AddBook(new Book("In Search of Lost Time", "Marcel Proust", 1913));
+            AddBook(new Book("The Brothers Karamazov", "Fyodor Dostoevsky", 1880));
+            AddBook(new Book("Anna Karenina", "Leo Tolstoy", 1877));
+            AddBook(new Book("Heart of Darkness", "Joseph Conrad", 1899));
+            AddBook(new Book("The Iliad", "Homer", -750));
+            AddBook(new Book("Beloved", "Toni Morrison", 1987));
+            AddBook(new Book("Jane Eyre", "Charlotte Bronte", 1847));
+            AddBook(new Book("Wuthering Heights", "Emily Bronte", 1847));
+            AddBook(new Book("One Hundred Years of Solitude", "Gabriel Garcia Marquez", 1967));
+            AddBook(new Book("The Sound and the Fury", "William Faulkner", 1929));
+            AddBook(new Book("Lolita", "Vladimir Nabokov", 1955));
+            AddBook(new Book("Crime and Punishment", "Fyodor Dostoevsky", 1866));
+            AddBook(new Book("Don Quixote", "Miguel de Cervantes", 1605));
+            AddBook(new Book("The Trial", "Franz Kafka", 1925));
+            AddBook(new Book("Dune", "Frank Herbert", 1965));
+            AddBook(new Book("The Divine Comedy", "Dante Alighieri", 1320));
+            AddBook(new Book("Moby Dick", "Herman Melville", 1851));
+            AddBook(new Book("Pride and Prejudice", "Jane Austen", 1813));
+            AddBook(new Book("The Hobbit", "J.R.R. Tolkien", 1937));
+            AddBook(new Book("The Lord of the Rings", "J.R.R. Tolkien", 1954));
+        }
+    }
+}
+
