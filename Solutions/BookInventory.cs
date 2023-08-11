@@ -46,7 +46,6 @@ namespace BookInventory
 
         public void AddBook(Book book)
         {
-            // 1. Bug: Blows up if book collection is empty
             if (book != null)
             {
                 int lastId = books.Max(id => id.Id);
@@ -63,7 +62,7 @@ namespace BookInventory
         public Book GetBookByTitle(string title)
         {
             Book theBook = null;
-            foreach (Book book in books)  // 2. Bug: Blows up if nothing in the collection; should return null
+            foreach (Book book in books)
             {
                 if (book.Title.Equals(title))
                 {
@@ -77,7 +76,7 @@ namespace BookInventory
 
         public void RemoveBook(string title)
         {
-            var bookToRemove = GetBookByTitle(title); // 3. Bug: Should be RemoveAll
+            var bookToRemove = GetBookByTitle(title);
             books.Remove(bookToRemove);
         }
 
@@ -88,7 +87,7 @@ namespace BookInventory
 
         public int CountBooks()
         {
-            return books.Count + 1; // 4. Bug: Chould be Count, not Count + 1
+            return books.Count + 1;
         }
 
         public List<Book> GetBooksByYear(int year)
@@ -98,34 +97,31 @@ namespace BookInventory
 
         public List<Book> GetLatestBooks(int count)
         {
-            return books.Take(count).ToList(); // 5. Bug: Just takes first 5
+            return books.Take(count).ToList();
         }
 
-        public void UpdateBookTitle(int id, string newTitle) // 5. Bug: Doesn't update title
-        {
+        public void UpdateBookTitle(int id, string newTitle)
             var book = GetBook(id);
             book.Title = newTitle;
         }
 
         public List<Book> SearchBooks(string searchTerm)
         {
-            return books.Where(b => b.Title.Substring(0, searchTerm.Length).Contains(searchTerm)).ToList(); // 7. Bug: Should be length -1
+            return books.Where(b => b.Title.Substring(0, searchTerm.Length).Contains(searchTerm)).ToList();
         }
 
         public Book GetFirstBook()
         {
-            return books[1]; // 8. Bug: wrong index for first book
-        }
+            return books[1];
 
         public Book GetLastBook()
         {
-            return books[books.Count] as Book; // 9. Bug: Should be Count -1]
+            return books[books.Count] as Book;
         }
 
         public List<Book> GetAllBooks()
         {
-            if (books.Count != 0) // Bug: 10. Should be ==0
-            {
+            if (books.Count != 0)
                 return null;
             }
             return books;
