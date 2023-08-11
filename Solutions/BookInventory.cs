@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 
 namespace BookInventory
 {
-    using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class Book
     {
-        public Book( string title, string author, int year)
+        public Book(string title, string author, int year)
         {
             Title = title;
             Author = author;
@@ -28,7 +28,7 @@ namespace BookInventory
 
         public BookInventory()
         {
-
+            books = new List<Book>();
         }
         public BookInventory(List<Book> inventory)
         {
@@ -42,15 +42,24 @@ namespace BookInventory
             }
 
         }
-        
+
 
         public void AddBook(Book book)
         {
             if (book != null)
             {
-                int lastId = books.Max(id => id.Id);
-                book.Id = ++lastId;
-                books.Add(book);
+                if (books.Count > 0)
+                {
+                    int lastId = books.Max(id => id.Id);
+                    book.Id = ++lastId;
+                    books.Add(book);
+                }
+                else
+                {
+                    book.Id = 1;
+                    books.Add(book);
+                }
+
             }
         }
 
@@ -62,7 +71,7 @@ namespace BookInventory
         public Book GetBookByTitle(string title)
         {
             Book theBook = null;
-            foreach (Book book in books)
+            foreach (Book book in books)  
             {
                 if (book.Title.Equals(title))
                 {
@@ -76,8 +85,7 @@ namespace BookInventory
 
         public void RemoveBook(string title)
         {
-            var bookToRemove = GetBookByTitle(title);
-            books.Remove(bookToRemove);
+           books.RemoveAll((b) => b.Title == title);
         }
 
         public List<Book> GetBooksByAuthor(string author)
@@ -87,7 +95,7 @@ namespace BookInventory
 
         public int CountBooks()
         {
-            return books.Count + 1;
+            return books.Count;
         }
 
         public List<Book> GetBooksByYear(int year)
@@ -97,31 +105,48 @@ namespace BookInventory
 
         public List<Book> GetLatestBooks(int count)
         {
-            return books.Take(count).ToList();
+            return books.OrderByDescending(b => b.Year).Take(count).ToList();
         }
 
         public void UpdateBookTitle(int id, string newTitle)
+        {
             var book = GetBook(id);
             book.Title = newTitle;
         }
 
         public List<Book> SearchBooks(string searchTerm)
         {
-            return books.Where(b => b.Title.Substring(0, searchTerm.Length).Contains(searchTerm)).ToList();
+            return books.Where(b => b.Title.Substring(0, searchTerm.Length).Contains(searchTerm)).ToList(); // 7. Bug: Should be length -1
         }
 
         public Book GetFirstBook()
         {
-            return books[1];
+            if (books.Count != 0)
+            {
+                return books[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         public Book GetLastBook()
         {
-            return books[books.Count] as Book;
+            if (books.Count != 0)
+            {
+                return books[books.Count - 1] as Book;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<Book> GetAllBooks()
         {
-            if (books.Count != 0)
+            if (books.Count == 0)
+            {
                 return null;
             }
             return books;
@@ -162,4 +187,3 @@ namespace BookInventory
         }
     }
 }
-
