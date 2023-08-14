@@ -1,141 +1,135 @@
-// npm install --save-dev @types/node
-
-
-import * as readline from 'readline';
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-let idCounter: number = 1;
-
-class Book {
-    id: number;
-    title: string;
-    author: string;
-    year: number;
-
-    constructor(title: string, author: string, year: number) {
-        this.id = idCounter++;
-        this.title = title;
-        this.author = author;
-        this.year = year;
-    }
-}
-
-class BookInventory {
-    private books: Book[] = [];
-
-    addBook(book: Book): void {
-        this.books.push(book);
-    }
-
-    removeBook(title: string): void {
-        const index = this.books.findIndex(book => book.title === title);
-        if (index !== -1) {
-            this.books.splice(index, 1);
-        }
-    }
-
-    getAllBooks(): Book[] {
-        return this.books;
-    }
-
-    getBooksByAuthor(author: string): Book[] {
-        return this.books.filter(book => book.author === author);
-    }
-
-    getLatestBooks(count: number): Book[] {
-        return this.books.slice(0, count);
-    }
-
-    getBookByTitle(title: string): Book | undefined {
-        return this.books.find(book => book.title === title);
-    }
-
-    updateBook(oldTitle: string, newBook: Book): void {
-        const index = this.books.findIndex(book => book.title === oldTitle);
-        if (index !== -1) {
-            this.books[index] = newBook;
-        }
-    }
-
-    getFirstBook(): Book {
-        return this.books[0];
-    }
-
-    getLastBook(): Book {
-        return this.books[this.books.length - 1];
-    }
-
-    initInventory(): void {
-        this.books.push(new Book("Test Book 1", "Test Author", 2020));
-        this.books.push(new Book("Test Book 2", "Test Author", 2021));
-    }
-}
+import * as readline from 'readline-sync';
+import { Book, BookInventory } from './path_to_your_export_file';  // Adjust the path
 
 const inventory: BookInventory = new BookInventory();
 
-function mainMenu(): void {
-    console.clear();
-    console.log("Book Inventory Management:");
-    //... (other menu items)
-    rl.question("Enter your choice (1-11): ", handleMainMenuChoice);
-}
+function main(): void {
+    while (true) {
+        console.log("\nMenu:");
+        console.log("1. Print book count");
+        console.log("2. Add book");
+        console.log("3. Remove book by ID");
+        console.log("4. Print entire inventory");
+        console.log("5. Get books by author");
+        console.log("6. Get latest n books");
+        console.log("7. Update book title");
+        console.log("8. Get the first book");
+        console.log("9. Get the last book");
+        console.log("10. Load test inventory");
+        console.log("11. Exit");
+        
+        const choice = readline.questionInt("Enter your choice: ");
 
-function handleMainMenuChoice(choice: string): void {
-    switch (choice) {
-        case '1':
-            addBook();
-            break;
-        case '2':
-            removeBook();
-            break;
-        case '3':
-            printInventory();
-            break;
-        // ... handle other options
-        case '11':
-            console.log("Exiting...");
-            rl.close();
-            return;
-        default:
-            console.log("Invalid choice. Please select between 1-11.");
-            mainMenu();
-            break;
+        switch (choice) {
+            case 1:
+                printBookCount();
+                break;
+            case 2:
+                addBook();
+                break;
+            case 3:
+                removeBook();
+                break;
+            case 4:
+                printInventory();
+                break;
+            case 5:
+                getBooksByAuthor();
+                break;
+            case 6:
+                getLatestBooks();
+                break;
+            case 7:
+                updateBookTitle();
+                break;
+            case 8:
+                getFirstBook();
+                break;
+            case 9:
+                getLastBook();
+                break;
+            case 10:
+                loadTestInventory();
+                break;
+            case 11:
+                return;
+        }
     }
 }
 
+function printBookCount(): void {
+    console.log(`Total number of books: ${inventory.books.length}`);
+}
+
 function addBook(): void {
-    rl.question("Enter book title: ", title => {
-        rl.question("Enter author: ", author => {
-            rl.question("Enter year: ", yearStr => {
-                const year = parseInt(yearStr, 10);
-                const book = new Book(title, author, year);
-                inventory.addBook(book);
-                console.log(`Added book: ${book.title}`);
-                mainMenu();
-            });
-        });
-    });
+    const title = readline.question("Enter book title: ");
+    const author = readline.question("Enter book author: ");
+    const year = readline.questionInt("Enter book year: ");
+    const book = new Book(title, author, year);
+    inventory.addBook(book);
+    console.log("Book added successfully.");
 }
 
 function removeBook(): void {
-    rl.question("Enter title to remove: ", title => {
-        inventory.removeBook(title);
-        console.log(`Removed ${title}`);
-        mainMenu();
-    });
+    const id = readline.questionInt("Enter book ID: ");
+    if (inventory.removeBook(id)) {
+        console.log("Book removed successfully.");
+    } else {
+        console.log("Book not found.");
+    }
 }
 
 function printInventory(): void {
-    const allBooks = inventory.getAllBooks();
-    console.log("Here are all of your books:");
-    allBooks.forEach(book => console.log(`${book.id}. ${book.title} by ${book.author} (${book.year})`));
-    rl.question("Press any key to continue...", () => {
-        mainMenu();
-    });
+    inventory.books.forEach(b => console.log(`${b.id}. ${b.title} by ${b.author} (${b.year})`));
 }
 
-mainMenu();
+function getBooksByAuthor(): void {
+    const author = readline.question("Enter author name: ");
+    const books = inventory.getBooksByAuthor(author);
+    if (books.length) {
+        books.forEach(b => console.log(`${b.title} (${b.year})`));
+    } else {
+        console.log("No books found by this author.");
+    }
+}
+
+function getLatestBooks(): void {
+    const count = readline.questionInt("Enter number of latest books: ");
+    const books = inventory.getLatestBooks(count);
+    books.forEach(b => console.log(`${b.title} by ${b.author} (${b.year})`));
+}
+
+function updateBookTitle(): void {
+    const id = readline.questionInt("Enter book ID: ");
+    const newTitle = readline.question("Enter new title: ");
+    if (inventory.updateBookTitle(id, newTitle)) {
+        console.log("Book title updated successfully.");
+    } else {
+        console.log("Book not found.");
+    }
+}
+
+function getFirstBook(): void {
+    const book = inventory.getFirstBook();
+    if (book) {
+        console.log(`First book: ${book.title} by ${book.author} (${book.year})`);
+    } else {
+        console.log("Inventory is empty.");
+    }
+}
+
+function getLastBook(): void {
+    const book = inventory.getLastBook();
+    if (book) {
+        console.log(`Last book: ${book.title} by ${book.author} (${book.year})`);
+    } else {
+        console.log("Inventory is empty.");
+    }
+}
+
+function loadTestInventory(): void {
+    inventory.initInventory();
+    console.log("Test inventory loaded.");
+}
+
+main();
