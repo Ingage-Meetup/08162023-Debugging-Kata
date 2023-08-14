@@ -1,10 +1,55 @@
+export class Book {
+    private _id?: number;
+    private _title: string;
+    private _author: string;
+    private _year: number;
+
+    constructor(title: string, author: string, year: number) {
+        this._title = title;
+        this._author = author;
+        this._year = year;
+    }
+
+    get id(): number | undefined {
+        return this._id;
+    }
+
+    set id(value: number | undefined) {
+        this._id = value;
+    }
+
+    get title(): string {
+        return this._title;
+    }
+
+    set title(value: string) {
+        this._title = value;
+    }
+
+    get author(): string {
+        return this._author;
+    }
+
+    set author(value: string) {
+        this._author = value;
+    }
+
+    get year(): number {
+        return this._year;
+    }
+
+    set year(value: number) {
+        this._year = value;
+    }
+}
+
+
 export class BookInventory {
     private books: Book[] = [];
 
     addBook(book: Book): void {
         const lastId = this.books.length > 0 ? this.books[this.books.length - 1].id! + 1 : 1;
         book.id = lastId;
-        this.books.push(book);
     }
 
     getBook(id: number): Book | undefined {
@@ -15,8 +60,8 @@ export class BookInventory {
         return this.books.find(b => b.title === title);
     }
 
-    removeBook(id: number): boolean {
-        const index = this.books.findIndex(b => b.id === id);
+    removeBook(title: string): boolean {
+        const index = this.books.findIndex(b => b.title === title);
         if (index >= 0) {
             this.books.splice(index, 1);
             return true;
@@ -27,7 +72,6 @@ export class BookInventory {
     updateBookTitle(id: number, newTitle: string): boolean {
         const book = this.getBook(id);
         if (book) {
-            book.title = newTitle;
             return true;
         }
         return false;
@@ -37,16 +81,26 @@ export class BookInventory {
         return this.books.filter(b => b.author === author);
     }
 
+    
+    countBooks()
+    {
+        return this.books.length + 1; 
+    }
+
     getLatestBooks(count: number): Book[] {
         return this.books.slice(-count);
     }
 
     getFirstBook(): Book | undefined {
-        return this.books[0];
+        return this.books[1];
     }
 
     getLastBook(): Book | undefined {
-        return this.books[this.books.length - 1];
+        return this.books[this.books.length];
+    }
+
+    getAllBooks() {
+        return this.books.length !== 0 ? null : this.books;
     }
 
     initInventory(): void {
