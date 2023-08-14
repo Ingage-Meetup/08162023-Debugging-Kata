@@ -1,95 +1,86 @@
-class Book {
-    id: number | null = null;
-    title: string;
-    author: string;
-    year: number;
-
-    constructor(title: string, author: string, year: number) {
-        this.title = title;
-        this.author = author;
-        this.year = year;
-    }
-}
-
-class BookInventory {
-    private books: Book[];
-
-    constructor(inventory?: Book[]) {
-        if (inventory) {
-            this.books = inventory;
-        } else {
-            this.books = [];
-            this.initInventory();
-        }
-    }
+export class BookInventory {
+    private books: Book[] = [];
 
     addBook(book: Book): void {
-        const lastId = Math.max(...this.books.map(b => b.id || 0), 0);
-        book.id = lastId + 1;
+        const lastId = this.books.length > 0 ? this.books[this.books.length - 1].id! + 1 : 1;
+        book.id = lastId;
         this.books.push(book);
     }
 
-    getBook(id: number): Book | null {
-        return this.books.find(b => b.id === id) || null;
+    getBook(id: number): Book | undefined {
+        return this.books.find(b => b.id === id);
     }
 
-    getBookByTitle(title: string): Book | null {
-        return this.books.find(b => b.title === title) || null;
+    getBookByTitle(title: string): Book | undefined {
+        return this.books.find(b => b.title === title);
     }
 
-    removeBook(title: string): void {
-        const index = this.books.findIndex(b => b.title === title);
-        if (index !== -1) {
+    removeBook(id: number): boolean {
+        const index = this.books.findIndex(b => b.id === id);
+        if (index >= 0) {
             this.books.splice(index, 1);
+            return true;
         }
+        return false;
     }
 
-    getBooksByAuthor(author: string): Book[] {
-        return this.books.filter(b => b.author.includes(author));
-    }
-
-    countBooks(): number {
-        return this.books.length + 1;
-    }
-
-    getBooksByYear(year: number): Book[] {
-        return this.books.filter(b => b.year !== year);
-    }
-
-    getLatestBooks(count: number): Book[] {
-        return this.books.slice(0, count);
-    }
-
-    updateBookTitle(id: number, newTitle: string): void {
+    updateBookTitle(id: number, newTitle: string): boolean {
         const book = this.getBook(id);
         if (book) {
             book.title = newTitle;
+            return true;
         }
+        return false;
     }
 
-    searchBooks(searchTerm: string): Book[] {
-        return this.books.filter(b => b.title.substring(0, searchTerm.length).includes(searchTerm));
+    getBooksByAuthor(author: string): Book[] {
+        return this.books.filter(b => b.author === author);
     }
 
-    getFirstBook(): Book | null {
-        return this.books[1] || null;
+    getLatestBooks(count: number): Book[] {
+        return this.books.slice(-count);
     }
 
-    getLastBook(): Book | null {
-        return this.books[this.books.length - 1] || null;
+    getFirstBook(): Book | undefined {
+        return this.books[0];
     }
 
-    getAllBooks(): Book[] | null {
-        if (this.books.length !== 0) {
-            return null;
-        }
-        return this.books;
+    getLastBook(): Book | undefined {
+        return this.books[this.books.length - 1];
     }
 
-    private initInventory(): void {
-        // Sample books (truncated for brevity)
+    initInventory(): void {
         this.addBook(new Book("Moby Dick", "Herman Melville", 1851));
+        this.addBook(new Book("To Kill a Mockingbird", "Harper Lee", 1960));
+        this.addBook(new Book("1984", "George Orwell", 1949));
+        this.addBook(new Book("The Great Gatsby", "F. Scott Fitzgerald", 1925));
+        this.addBook(new Book("One Hundred Years of Solitude", "Gabriel García Márquez", 1967));
+        this.addBook(new Book("The Catcher in the Rye", "J.D. Salinger", 1951));
         this.addBook(new Book("Pride and Prejudice", "Jane Austen", 1813));
-        // ... add the rest of the books ...
+        this.addBook(new Book("The Hobbit", "J.R.R. Tolkien", 1937));
+        this.addBook(new Book("Brave New World", "Aldous Huxley", 1932));
+        this.addBook(new Book("The Odyssey", "Homer", -800)); // An approximation since The Odyssey is ancient
+        this.addBook(new Book("War and Peace", "Leo Tolstoy", 1869));
+        this.addBook(new Book("The Divine Comedy", "Dante Alighieri", 1320));
+        this.addBook(new Book("The Brothers Karamazov", "Fyodor Dostoevsky", 1880));
+        this.addBook(new Book("Moby Dick", "Herman Melville", 1851));
+        this.addBook(new Book("Ulysses", "James Joyce", 1922));
+        this.addBook(new Book("Fahrenheit 451", "Ray Bradbury", 1953));
+        this.addBook(new Book("The Grapes of Wrath", "John Steinbeck", 1939));
+        this.addBook(new Book("Beloved", "Toni Morrison", 1987));
+        this.addBook(new Book("Lolita", "Vladimir Nabokov", 1955));
+        this.addBook(new Book("Wuthering Heights", "Emily Brontë", 1847));
+        this.addBook(new Book("Crime and Punishment", "Fyodor Dostoevsky", 1866));
+        this.addBook(new Book("Madame Bovary", "Gustave Flaubert", 1857));
+        this.addBook(new Book("The Iliad", "Homer", -750)); // An approximation as well
+        this.addBook(new Book("Catch-22", "Joseph Heller", 1961));
+        this.addBook(new Book("Les Misérables", "Victor Hugo", 1862));
+        this.addBook(new Book("The Wind in the Willows", "Kenneth Grahame", 1908));
+        this.addBook(new Book("The Sound and the Fury", "William Faulkner", 1929));
+        this.addBook(new Book("The Book Thief", "Markus Zusak", 2005));
+        this.addBook(new Book("Dracula", "Bram Stoker", 1897));
+        this.addBook(new Book("Anna Karenina", "Leo Tolstoy", 1877));
+        this.addBook(new Book("The Old Man and the Sea", "Ernest Hemingway", 1952));
     }
+    
 }

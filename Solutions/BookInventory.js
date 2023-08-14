@@ -40,20 +40,14 @@ class Book {
 }
 
 class BookInventory {
-    constructor(inventory) {
-        if (inventory !== null && inventory !== undefined) {
-            this.books = inventory;
-        } else {
-            this.books = [];
-            this.initInventory();
-        }
+    constructor() {
+        this.books = []
     }
 
     addBook(book) {
         if (book !== null) {
             const lastId = Math.max(...this.books.map(b => b.id));
             book.id = isNaN(lastId) ? 1 : lastId + 1;
-            this.books.push(book);
         }
     }
 
@@ -96,7 +90,6 @@ class BookInventory {
 
     updateBookTitle(id, newTitle) {
         const book = this.getBook(id);
-        book.title = newTitle;
     }
 
     searchBooks(searchTerm) {
@@ -114,8 +107,6 @@ class BookInventory {
     getAllBooks() {
         return this.books.length !== 0 ? null : this.books;
     }
-
-// ... (continuing from where we left off)
 
     initInventory() {
         this.addBook(new Book("Moby Dick", "Herman Melville", 1851));
@@ -152,5 +143,5 @@ class BookInventory {
 }
 
 
-}
+module.exports = {Book, BookInventory}
 
