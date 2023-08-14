@@ -61,7 +61,7 @@ namespace BookInventory
                             GetLastBook();
                             break;
                         case 9:
-                            PrintInventory();  // Same as option 3
+                            PrintInventory();  
                             break;
                         case 10:
                             LoadTestInventory();
