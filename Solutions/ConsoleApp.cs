@@ -16,12 +16,13 @@ namespace BookInventory
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine("Book Inventory Management:");
-                Console.WriteLine("1. Add a Book");
-                Console.WriteLine("2. Remove a Book");
-                Console.WriteLine("3. Print Inventory");
+                Console.WriteLine();
+                Console.WriteLine("1. Get Count of Books");
+                Console.WriteLine("2. Add a Book");
+                Console.WriteLine("3. Remove a Book");
                 Console.WriteLine("4. Get Books by Author");
                 Console.WriteLine("5. Get the Latest Books");
-                Console.WriteLine("6. Edit a Book Record");
+                Console.WriteLine("6. Update Book Title");
                 Console.WriteLine("7. Get the First Book");
                 Console.WriteLine("8. Get the Last Book");
                 Console.WriteLine("9. Get All Books");
@@ -36,13 +37,13 @@ namespace BookInventory
                     switch (choice)
                     {
                         case 1:
-                            AddBook();
+                            PrintBookCount();
                             break;
                         case 2:
-                            RemoveBook();
+                            AddBook();
                             break;
                         case 3:
-                            PrintInventory();
+                            RemoveBook();
                             break;
                         case 4:
                             GetBooksByAuthor();
@@ -51,7 +52,7 @@ namespace BookInventory
                             GetLatestBooks();
                             break;
                         case 6:
-                            EditBookRecord();
+                            UpdateBookTitle();
                             break;
                         case 7:
                             GetFirstBook();
@@ -60,7 +61,7 @@ namespace BookInventory
                             GetLastBook();
                             break;
                         case 9:
-                            PrintInventory();  // Same as option 3
+                            PrintInventory();  
                             break;
                         case 10:
                             LoadTestInventory();
@@ -80,8 +81,11 @@ namespace BookInventory
             }
         }
 
- 
 
+        static void PrintBookCount()
+        {
+            Console.WriteLine($"Total books in library: {inventory.CountBooks()}");
+        }
         static void AddBook()
         {
             Console.Write("Enter book title: ");
@@ -116,12 +120,20 @@ namespace BookInventory
         static void PrintInventory()
         {
             var allBooks = inventory.GetAllBooks();
-            Console.WriteLine("Here are all of your books:");
-            Console.WriteLine();
-            foreach (var book in allBooks)
+            if (allBooks != null )
             {
-                Console.WriteLine($"{book.Id}. {book.Title} by {book.Author} ({book.Year})");
+                Console.WriteLine("Here are all of your books:");
+                Console.WriteLine();
+                foreach (var book in allBooks)
+                {
+                    Console.WriteLine($"{book.Id}. {book.Title} by {book.Author} ({book.Year})");
+                }
             }
+            else
+            {
+                Console.WriteLine("You have no books in your library!");
+            }
+
             Console.WriteLine();
             Console.WriteLine();
         }
@@ -155,7 +167,7 @@ namespace BookInventory
             }
         }
 
-        static void EditBookRecord()
+        static void UpdateBookTitle()
         {
             Console.Write("Enter book Title to edit: ");
             string oldTitle = Console.ReadLine();
@@ -167,16 +179,7 @@ namespace BookInventory
                 string title = Console.ReadLine();
                 title = string.IsNullOrWhiteSpace(title) ? book.Title : title;
 
-                Console.Write($"Enter new author (leave blank to keep {book.Author}): ");
-                string author = Console.ReadLine();
-                author = string.IsNullOrWhiteSpace(author) ? book.Author : author;
-
-                Console.Write($"Enter new year (leave blank to keep {book.Year}): ");
-                int year;
-                string yearInput = Console.ReadLine();
-                year = string.IsNullOrWhiteSpace(yearInput) ? book.Year : int.Parse(yearInput);
-
-                inventory.UpdateBookTitle(book.Id, oldTitle);
+                inventory.UpdateBookTitle(book.Id, title);
                 Console.WriteLine("Book updated successfully.");
             }
             else

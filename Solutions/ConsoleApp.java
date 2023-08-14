@@ -1,7 +1,8 @@
-import java.util.Scanner;
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Scanner;
 
-public class Main {
+public class BookInventoryApp {
 
     private static BookInventory inventory = new BookInventory();
     private static Scanner scanner = new Scanner(System.in);
@@ -10,33 +11,36 @@ public class Main {
         boolean continueRunning = true;
 
         while (continueRunning) {
+            System.out.println();
+            System.out.println();
             System.out.println("\n\nBook Inventory Management:");
-            System.out.println("1. Add a Book");
-            System.out.println("2. Remove a Book");
-            System.out.println("3. Print Inventory");
+            System.out.println();
+            System.out.println("1. Get Count of Books");
+            System.out.println("2. Add a Book");
+            System.out.println("3. Remove a Book");
             System.out.println("4. Get Books by Author");
             System.out.println("5. Get the Latest Books");
-            System.out.println("6. Edit a Book Record");
+            System.out.println("6. Update Book Title");
             System.out.println("7. Get the First Book");
             System.out.println("8. Get the Last Book");
             System.out.println("9. Get All Books");
             System.out.println("10. Load Test Inventory");
             System.out.println("11. Exit");
-            System.out.print("Enter your choice (1-11): ");
+            System.out.print("Enter your choice (1-11): \n");
 
-            if (scanner.hasNextInt()) {
+            try {
                 int choice = scanner.nextInt();
-                scanner.nextLine();  // Consume newline left-over
+                scanner.nextLine();  // Consume newline left over
 
                 switch (choice) {
                     case 1:
-                        addBook();
+                        printBookCount();
                         break;
                     case 2:
-                        removeBook();
+                        addBook();
                         break;
                     case 3:
-                        printInventory();
+                        removeBook();
                         break;
                     case 4:
                         getBooksByAuthor();
@@ -45,7 +49,7 @@ public class Main {
                         getLatestBooks();
                         break;
                     case 6:
-                        editBookRecord();
+                        updateBookTitle();
                         break;
                     case 7:
                         getFirstBook();
@@ -66,13 +70,17 @@ public class Main {
                         System.out.println("Invalid choice. Please select between 1-11.");
                         break;
                 }
-            } else {
+            } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a number between 1-11.");
-                scanner.nextLine();  // Clear input
+                scanner.next();  // Clear the invalid input
             }
         }
     }
 
+    static void printBookCount()
+    {
+        System.out.print("Total books in library: " + inventory.countBooks());
+    }
     private static void addBook() {
         System.out.print("Enter book title: ");
         String title = scanner.nextLine();
@@ -81,13 +89,14 @@ public class Main {
         String author = scanner.nextLine();
 
         System.out.print("Enter year: ");
+        int year = 0;
         while (!scanner.hasNextInt()) {
             System.out.println("Invalid year. Please enter a valid number.");
             System.out.print("Enter year: ");
-            scanner.nextLine();  // Clear invalid input
+            scanner.next();
         }
-        int year = scanner.nextInt();
-        scanner.nextLine();  // Consume newline left-over
+        year = scanner.nextInt();
+        scanner.nextLine();  // Consume newline left over
 
         Book book = new Book(title, author, year);
         inventory.addBook(book);
@@ -104,10 +113,11 @@ public class Main {
 
     private static void printInventory() {
         List<Book> allBooks = inventory.getAllBooks();
-        System.out.println("Here are all of your books:");
-        for (Book book : allBooks) {
+        System.out.println("Here are all of your books:\n");
+        for (Book book: allBooks) {
             System.out.println(book.getId() + ". " + book.getTitle() + " by " + book.getAuthor() + " (" + book.getYear() + ")");
         }
+        System.out.println("\n");
     }
 
     private static void getBooksByAuthor() {
@@ -122,13 +132,14 @@ public class Main {
 
     private static void getLatestBooks() {
         System.out.print("How many of the latest books do you want to retrieve? ");
+        int count = 0;
         while (!scanner.hasNextInt()) {
             System.out.println("Invalid number. Please enter a valid number.");
             System.out.print("How many of the latest books do you want to retrieve? ");
-            scanner.nextLine();  // Clear invalid input
+            scanner.next();
         }
-        int count = scanner.nextInt();
-        scanner.nextLine();  // Consume newline left-over
+        count = scanner.nextInt();
+        scanner.nextLine();  // Consume newline left over
 
         List<Book> latestBooks = inventory.getLatestBooks(count);
         for (Book book : latestBooks) {
@@ -136,7 +147,7 @@ public class Main {
         }
     }
 
-    private static void editBookRecord() {
+    private static void updateBookTitle() {
         System.out.print("Enter book Title to edit: ");
         String oldTitle = scanner.nextLine();
 
@@ -144,20 +155,9 @@ public class Main {
         if (book != null) {
             System.out.print("Enter new title (leave blank to keep " + book.getTitle() + "): ");
             String title = scanner.nextLine();
-            title = title.isEmpty() ? book.getTitle() : title;
+            title = (title == null || title.isEmpty()) ? book.getTitle() : title;
 
-            System.out.print("Enter new author (leave blank to keep " + book.getAuthor() + "): ");
-            String author = scanner.nextLine();
-            author = author.isEmpty() ? book.getAuthor() : author;
-
-            System.out.print("Enter new year (leave blank to keep " + book.getYear() + "): ");
-            int year = book.getYear();
-            if (scanner.hasNextInt()) {
-                year = scanner.nextInt();
-            }
-            scanner.nextLine();  // Consume newline left-over
-
-            inventory.updateBook(new Book(title, author, year), oldTitle);
+            inventory.updateBookTitle(book.getId(), oldTitle);
             System.out.println("Book updated successfully.");
         } else {
             System.out.println(oldTitle + " not found!");

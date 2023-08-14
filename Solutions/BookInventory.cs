@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BookInventory
 {
-    using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class Book
     {
         public Book( string title, string author, int year)
@@ -28,7 +24,7 @@ namespace BookInventory
 
         public BookInventory()
         {
-
+            books = new List<Book>();
         }
         public BookInventory(List<Book> inventory)
         {
@@ -62,7 +58,7 @@ namespace BookInventory
         public Book GetBookByTitle(string title)
         {
             Book theBook = null;
-            foreach (Book book in books)
+            foreach (Book book in books)  
             {
                 if (book.Title.Equals(title))
                 {
@@ -76,7 +72,7 @@ namespace BookInventory
 
         public void RemoveBook(string title)
         {
-            var bookToRemove = GetBookByTitle(title);
+            var bookToRemove = GetBookByTitle(title); 
             books.Remove(bookToRemove);
         }
 
@@ -87,7 +83,7 @@ namespace BookInventory
 
         public int CountBooks()
         {
-            return books.Count + 1;
+            return books.Count + 1; 
         }
 
         public List<Book> GetBooksByYear(int year)
@@ -97,31 +93,34 @@ namespace BookInventory
 
         public List<Book> GetLatestBooks(int count)
         {
-            return books.Take(count).ToList();
+            return books.Take(count).ToList(); 
         }
 
-        public void UpdateBookTitle(int id, string newTitle)
+        public void UpdateBookTitle(int id, string newTitle) 
+        {
             var book = GetBook(id);
             book.Title = newTitle;
         }
 
         public List<Book> SearchBooks(string searchTerm)
         {
-            return books.Where(b => b.Title.Substring(0, searchTerm.Length).Contains(searchTerm)).ToList();
+            return books.Where(b => b.Title.Substring(0, searchTerm.Length).Contains(searchTerm)).ToList(); 
         }
 
         public Book GetFirstBook()
         {
-            return books[1];
+            return books[1]; 
+        }
 
         public Book GetLastBook()
         {
-            return books[books.Count] as Book;
+            return books[books.Count] as Book; 
         }
 
         public List<Book> GetAllBooks()
         {
-            if (books.Count != 0)
+            if (books.Count != 0) 
+            {
                 return null;
             }
             return books;

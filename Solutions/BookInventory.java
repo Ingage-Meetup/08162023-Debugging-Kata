@@ -1,37 +1,19 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-class Book {
-    private int id;
-    private String title;
-    private String author;
-    private int year;
 
-    public Book(String title, String author, int year) {
-        this.title = title;
-        this.author = author;
-        this.year = year;
+class BookInventory {
+    private List<Book> books = null;
+
+    public BookInventory() {
+        books = new ArrayList<>();
     }
-
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
-    public int getYear() { return year; }
-    public void setYear(int year) { this.year = year; }
-}
-
-public class BookInventory {
-    private List<Book> books = new ArrayList<>();
-
-    public BookInventory() {}
 
     public BookInventory(List<Book> inventory) {
         if (inventory != null) {
-            this.books = inventory;
+            books = inventory;
         } else {
             initInventory();
         }
@@ -40,7 +22,7 @@ public class BookInventory {
     public void addBook(Book book) {
         if (book != null) {
             int lastId = books.stream().mapToInt(Book::getId).max().orElse(0);
-            book.setId(lastId + 1);
+            book.setId(lastId);
             books.add(book);
         }
     }
@@ -71,25 +53,12 @@ public class BookInventory {
         return books.size() + 1;
     }
 
-    public List<Book> getBooksByYear(int year) {
-        return books.stream().filter(b -> b.getYear() != year).collect(Collectors.toList());
-    }
-
     public List<Book> getLatestBooks(int count) {
         return books.stream().limit(count).collect(Collectors.toList());
     }
 
     public void updateBookTitle(int id, String newTitle) {
         Book book = getBook(id);
-        if (book != null) {
-            book.setTitle(newTitle);
-        }
-    }
-
-    public List<Book> searchBooks(String searchTerm) {
-        return books.stream()
-                .filter(b -> b.getTitle().substring(0, searchTerm.length()).contains(searchTerm))
-                .collect(Collectors.toList());
     }
 
     public Book getFirstBook() {
@@ -108,6 +77,35 @@ public class BookInventory {
     }
 
     public void initInventory() {
-        // ... initialization code as in the original ...
+        addBook(new Book("Moby Dick", "Herman Melville", 1851));
+        addBook(new Book("Pride and Prejudice", "Jane Austin", 1813));
+        addBook(new Book("1984", "George Orwell", 1949));
+        addBook(new Book("To Kill a Mockingbird", "Harper Lee", 1960));
+        addBook(new Book("Brave New World", "Aldous Huxley", 1932));
+        addBook(new Book("The Great Gatsby", "F. Scott Fitzgerald", 1925));
+        addBook(new Book("Catcher in the Rye", "J.D. Salinger", 1951));
+        addBook(new Book("War and Peace", "Leo Tolstoy", 1869));
+        addBook(new Book("The Odyssey", "Homer", -800));
+        addBook(new Book("Ulysses", "James Joyce", 1922));
+        addBook(new Book("In Search of Lost Time", "Marcel Proust", 1913));
+        addBook(new Book("The Brothers Karamazov", "Fyodor Dostoevsky", 1880));
+        addBook(new Book("Anna Karenina", "Leo Tolstoy", 1877));
+        addBook(new Book("Heart of Darkness", "Joseph Conrad", 1899));
+        addBook(new Book("The Iliad", "Homer", -750));
+        addBook(new Book("Beloved", "Toni Morrison", 1987));
+        addBook(new Book("Jane Eyre", "Charlotte Bronte", 1847));
+        addBook(new Book("Wuthering Heights", "Emily Bronte", 1847));
+        addBook(new Book("One Hundred Years of Solitude", "Gabriel Garcia Marquez", 1967));
+        addBook(new Book("The Sound and the Fury", "William Faulkner", 1929));
+        addBook(new Book("Lolita", "Vladimir Nabokov", 1955));
+        addBook(new Book("Crime and Punishment", "Fyodor Dostoevsky", 1866));
+        addBook(new Book("Don Quixote", "Miguel de Cervantes", 1605));
+        addBook(new Book("The Trial", "Franz Kafka", 1925));
+        addBook(new Book("Dune", "Frank Herbert", 1965));
+        addBook(new Book("The Divine Comedy", "Dante Alighieri", 1320));
+        addBook(new Book("Moby Dick", "Herman Melville", 1851));
+        addBook(new Book("Pride and Prejudice", "Jane Austen", 1813));
+        addBook(new Book("The Hobbit", "J.R.R. Tolkien", 1937));
+        addBook(new Book("The Lord of the Rings", "J.R.R. Tolkien", 1954));
     }
 }
